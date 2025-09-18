@@ -1,0 +1,9 @@
+node_modules/
+dist/
+out/
+*.log
+.DS_Store
+py/.venv/
+py/__pycache__/
+*.pyc
+recordings/
