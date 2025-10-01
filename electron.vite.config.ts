@@ -7,7 +7,7 @@ export default defineConfig({
     entry: 'src/main/main.ts',
     vite: {
       build: {
-        outDir: 'dist/main',
+        outDir: resolve(__dirname, 'dist', 'main'),
         emptyOutDir: true,
         rollupOptions: {
           output: {
@@ -23,7 +23,7 @@ export default defineConfig({
     },
     vite: {
       build: {
-        outDir: 'dist/preload',
+        outDir: resolve(__dirname, 'dist', 'preload'),
         emptyOutDir: true,
         rollupOptions: {
           output: {
@@ -42,7 +42,7 @@ export default defineConfig({
     },
     plugins: [react()],
     build: {
-      outDir: '../../dist/renderer',
+      outDir: resolve(__dirname, 'dist', 'renderer'),
       emptyOutDir: true,
       rollupOptions: {
         input: {
