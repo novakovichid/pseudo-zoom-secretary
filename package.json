@@ -11,6 +11,7 @@
     "dev": "electron .",
     "predev": "npm run build:ts",
     "build": "electron-builder",
+    "prebuild": "npm run build:ts",
     "build:ts": "electron-vite build"
   },
   "dependencies": {
