@@ -10,8 +10,9 @@
     "prestart": "npm run build:ts",
     "dev": "electron .",
     "predev": "npm run build:ts",
-    "build": "electron-builder",
-    "prebuild": "npm run build:ts",
+
+    "build": "electron-builder --config electron-builder.config.cjs",
+
     "build:ts": "electron-vite build"
   },
   "dependencies": {
@@ -32,19 +33,5 @@
     "electron-vite": "^2.2.0",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3"
-  },
-  "build": {
-    "appId": "com.pseudo.zoom.secretary",
-    "files": [
-      "dist/**/*",
-      "py/**/*",
-      "package.json"
-    ],
-    "extraResources": [
-      {
-        "from": "py",
-        "to": "py"
-      }
-    ]
   }
 }
