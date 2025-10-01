@@ -10,7 +10,9 @@
     "prestart": "npm run build:ts",
     "dev": "electron .",
     "predev": "npm run build:ts",
+
     "build": "electron-builder --config electron-builder.config.cjs",
+
     "build:ts": "electron-vite build"
   },
   "dependencies": {
