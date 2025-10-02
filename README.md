@@ -1,12 +1,17 @@
 # pseudo-zoom-secretary
 
-**Псевдоклиент Zoom с записью и локальной транскрибацией.** Приложение на базе Electron оборачивает веб-клиент Zoom, автоматически включает запись системного звука через WASAPI loopback (PortAudio/naudiodon), а затем обрабатывает аудио локально: фильтрует голосовые участки, выполняет диаризацию по MFCC и распознаёт речь моделью Whisper (faster-whisper).
+**Псевдоклиент Zoom с записью системного аудио и локальной пост-обработкой.**
+
+Новая версия проекта построена на [Electron](https://www.electronjs.org/), [React](https://react.dev/) и сборщике
+[electron-vite](https://github.com/alex8088/electron-vite). Интерфейс открывает веб-клиент Zoom во встроенном iframe,
+перехватывает системный звук через WASAPI loopback (`naudiodon`) и запускает Python-скрипт для VAD/диаризации и распознавания речи.
 
 ## Требования
 
-- Node.js 18 или 20, npm
-- Python 3.13+
-- Установленный `ffmpeg` в `PATH`
+- Node.js 18+ (рекомендовано 20 LTS)
+- npm
+- Python 3.10+
+- `ffmpeg` в `PATH`
 - Windows 10/11 с поддержкой WASAPI loopback
 
 ## Установка
@@ -14,50 +19,61 @@
 ```bash
 npm install
 cd py
-py -3.13 -m venv .venv
-.\.venv\Scripts\activate
+python -m venv .venv
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-## Скрипты
+## Скрипты npm
 
-- `npm run dev` — быстрый запуск Electron (перед стартом автоматически собирает TypeScript).
-- `npm start` — запуск приложения в режиме production-пакета (также пересобирает TypeScript).
-- `npm run build` — сборка инсталлятора через `electron-builder`.
+| Скрипт             | Назначение                                                                 |
+| ------------------ | --------------------------------------------------------------------------- |
+| `npm run dev`      | Горячая разработка: запускает Vite для renderer и Electron с HMR.           |
+| `npm run build`    | Собирает main/preload/renderer в `dist/` (использует electron-vite).        |
+| `npm run preview`  | Запускает уже собранное приложение из `dist/` без упаковки.                 |
+| `npm start`        | Собирает проект и запускает production-билд Electron.                       |
+| `npm run dist`     | Полная сборка установщика через `electron-builder`.                         |
+| `npm run lint`     | Типовой аудит: `tsc --noEmit`.                                              |
 
-## Использование
-
-1. Запустите `npm run dev` (или `npm start`).
-2. Введите **ID встречи**, **пароль** и **имя** участника.
-3. Выберите доступное **WASAPI loopback-устройство** (или оставьте значение по умолчанию).
-4. Настройте задержку перед стартом записи и авто-стоп по времени.
-5. Нажмите **«Подключиться и записывать»** — через указанное время начнётся захват аудио в `recordings/meeting.wav` (каталог данных приложения в `%APPDATA%/pseudo-zoom-secretary`).
-6. По окончании встречи нажмите **«Стоп»**.
-7. Для пост-обработки нажмите **«Обработать»**. Скрипт `py/process_audio.py` выполнит VAD → диаризацию → ASR и создаст `transcript_speakers.txt` и `transcript_speakers.srt` рядом с WAV.
-
-## Структура проекта
+## Структура
 
 ```
 pseudo-zoom-secretary/
   package.json
   electron.vite.config.ts
+  electron-builder.config.cjs
   src/
     main/
-      main.ts
+      index.ts
       audio.ts
     preload/
-      preload.ts
+      index.ts
     renderer/
       index.html
-      renderer.tsx
+      src/
+        App.tsx
+        main.tsx
+        components/
+        hooks/
+        styles/
+    shared/
+      types.ts
   py/
     process_audio.py
     requirements.txt
-  README.md
 ```
+
+## Использование
+
+1. Запустите `npm run dev`, чтобы открыть приложение с горячей перезагрузкой интерфейса.
+2. Введите **ID встречи Zoom** (9–12 цифр), при необходимости пароль и отображаемое имя.
+3. Выберите устройство вывода WASAPI (loopback). При старте запись сохранится в `recordings/meeting.wav` внутри каталога данных пользователя (`%APPDATA%/pseudo-zoom-secretary`).
+4. Настройте задержку перед стартом и авто-остановку по таймеру, затем нажмите «Подключиться и записывать».
+5. После встречи остановите запись и запустите «Обработать запись» — будет вызван `py/process_audio.py`.
 
 ## Примечания
 
-- Интерфейс полностью на русском языке и оптимизирован под Windows.
-- Перед записью предупредите участников встречи — соблюдайте законы и внутренние политики.
-- Для стабильного распознавания речи убедитесь в наличии достаточных ресурсов CPU и дискового пространства.
+- Приложение рассчитано на Windows: Mac/Linux не поддерживают loopback через `naudiodon`.
+- Перед записью предупредите участников и соблюдайте политику безопасности вашей организации.
+- Для корректной работы Python-обработки убедитесь, что виртуальное окружение активировано и зависимости установлены.

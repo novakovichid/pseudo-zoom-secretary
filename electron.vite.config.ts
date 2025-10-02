@@ -1,25 +1,26 @@
 import { defineConfig } from 'electron-vite';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   main: {
-    entry: 'src/main/main.ts',
+    entry: 'src/main/index.ts',
     vite: {
       build: {
         outDir: resolve(__dirname, 'dist', 'main'),
         emptyOutDir: true,
         rollupOptions: {
           output: {
-            entryFileNames: '[name].js'
-          }
-        }
-      }
-    }
+            entryFileNames: '[name].js',
+            chunkFileNames: '[name].js',
+          },
+        },
+      },
+    },
   },
   preload: {
     input: {
-      preload: resolve(__dirname, 'src/preload/preload.ts')
+      index: resolve(__dirname, 'src/preload/index.ts'),
     },
     vite: {
       build: {
@@ -27,33 +28,35 @@ export default defineConfig({
         emptyOutDir: true,
         rollupOptions: {
           output: {
-            entryFileNames: '[name].js'
-          }
-        }
-      }
-    }
+            entryFileNames: '[name].js',
+            chunkFileNames: '[name].js',
+          },
+        },
+      },
+    },
   },
   renderer: {
     root: 'src/renderer',
+    plugins: [react()],
     resolve: {
       alias: {
-        '@': resolve(__dirname, 'src/renderer')
-      }
+        '@renderer': resolve(__dirname, 'src/renderer/src'),
+        '@shared': resolve(__dirname, 'src/shared'),
+      },
     },
-    plugins: [react()],
     build: {
       outDir: resolve(__dirname, 'dist', 'renderer'),
       emptyOutDir: true,
       rollupOptions: {
         input: {
-          index: resolve(__dirname, 'src/renderer/index.html')
+          index: resolve(__dirname, 'src/renderer/index.html'),
         },
         output: {
           entryFileNames: '[name].js',
           chunkFileNames: 'chunks/[name].js',
-          assetFileNames: 'assets/[name][extname]'
-        }
-      }
-    }
-  }
+          assetFileNames: 'assets/[name][extname]',
+        },
+      },
+    },
+  },
 });

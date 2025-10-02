@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src https://*.zoom.us https://zoom.us;">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Псевдо Zoom Секретарь</title>
+    <title>Pseudo Zoom Secretary</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="./renderer.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
