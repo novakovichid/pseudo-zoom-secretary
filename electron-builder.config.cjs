@@ -1,10 +1,10 @@
-const { spawn } = require('child_process');
+const { spawn } = require('node:child_process');
 
-function runBuildTs() {
+function runBundle() {
   const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
   return new Promise((resolve, reject) => {
-    const child = spawn(npmCommand, ['run', 'build:ts'], {
+    const child = spawn(npmCommand, ['run', 'build'], {
       stdio: 'inherit',
       shell: false,
     });
@@ -13,7 +13,7 @@ function runBuildTs() {
       if (code === 0) {
         resolve(true);
       } else {
-        reject(new Error(`npm run build:ts exited with code ${code}`));
+        reject(new Error(`npm run build exited with code ${code}`));
       }
     });
 
@@ -25,11 +25,7 @@ function runBuildTs() {
 
 module.exports = {
   appId: 'com.pseudo.zoom.secretary',
-  files: [
-    'dist/**/*',
-    'py/**/*',
-    'package.json',
-  ],
+  files: ['dist/**/*', 'py/**/*', 'package.json'],
   extraResources: [
     {
       from: 'py',
@@ -37,7 +33,7 @@ module.exports = {
     },
   ],
   async beforeBuild() {
-    await runBuildTs();
+    await runBundle();
     return true;
   },
 };
