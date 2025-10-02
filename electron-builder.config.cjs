@@ -1,12 +1,13 @@
 const { spawn } = require('node:child_process');
 
 function runBundle() {
-  const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const npmCommand = 'npm';
+  const useShell = process.platform === 'win32';
 
   return new Promise((resolve, reject) => {
     const child = spawn(npmCommand, ['run', 'build'], {
       stdio: 'inherit',
-      shell: false,
+      shell: useShell,
     });
 
     child.on('close', (code) => {
