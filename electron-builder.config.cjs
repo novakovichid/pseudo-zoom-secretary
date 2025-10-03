@@ -26,6 +26,9 @@ function runBundle() {
 
 module.exports = {
   appId: 'com.pseudo.zoom.secretary',
+  directories: {
+    output: 'release',
+  },
   files: ['dist/**/*', 'py/**/*', 'package.json'],
   extraResources: [
     {
